@@ -1,8 +1,10 @@
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const { createToken } = require('./utils/jwt')
 const pool = require('./db').pool
 const app = express()
+
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true,}))
@@ -40,32 +42,103 @@ app.post('/api/user/join',async (req,res)=>{
                     ?,?,?,?,?,now(),'1',?,?
                 )`
     const prepare = [1,userid,userpw,name,nickname,phone,mobile]
-    const [result] = await pool.execute(sql,prepare) // 1. SQL:string , 2. prepare:array
-    // DB에다가 해당 SQL을 던져서 요청을보내고.
-    // DB가 그 해당 SQL을 실행을해서 결과물을 result라는 변수에 다가 준거에요.
+
+    try {
+        const [result] = await pool.execute(sql,prepare) // 1. SQL:string , 2. prepare:array
+        
+        const response = {
+            result:{
+                row:result.affectedRows,
+                id:result.insertId
+            },
+            errno:0,
+        }
     
-    console.log(result)
-
-    const response = {
-        result:{
-            row:result.affectedRows,
-            id:result.insertId
-        },
-        errno:0,
+        res.setHeader('Set-cookie','name=ingoo; path=/; Domain=localhost;')
+        res.cookie('name2','ingoo2',{
+            path:'/',
+            httpOnly:true,
+            secure:true,
+            domain:'localhost'
+        })
+        res.json(response) 
+    } catch (e){
+        console.log(e.message)
+        const response = {
+            result:{
+                row:0,
+                id:0
+            },
+            errno:1,
+        }
+        
+        res.json(response)  
     }
+})
 
-    res.setHeader('Set-cookie','name=ingoo; path=/; Domain=localhost;')
-    res.cookie('name2','ingoo2',{
-        path:'/',
-        httpOnly:true,
-        secure:true,
-        domain:'localhost'
-    })
-    res.json(response) 
+app.post('/api/user/login', async (req,res)=>{
+    const {userid,userpw} = req.body
+
+    const sql = `SELECT userid,name,nickname,userlevel FROM user WHERE userid=? and userpw=?`
+    const prepare = [userid,userpw]
+
+    try {
+        const [result] = await pool.execute(sql,prepare)
+        
+        // result 값이 
+        // 아이디와 패스워드가 일치한 값이 존재한다면, 배열안에 요소가 존재할것이고,
+        // 없다면 배열안에 요소가없습니다 = [] 
+        if (result.length <= 0) throw new Error('회원이없음')
+
+        const jwt = createToken( result[0] )
+        console.log(jwt)
+
+        res.cookie('token',jwt,{
+            path:'/',
+            httpOnly:true,
+            domain:'localhost'
+        })
+
+        const response = {
+            result,
+            errno:0,
+        }
+
+        res.json(response)
+    } catch (e) {
+        const response = {
+            result:[],
+            errno:1,
+        }
+
+        res.json(response)
+    }
+})
+
+
+app.post('/api/auth',(req,res)=>{    
+    const {token} = req.body
+    // ... token 인증 코드..
+    if (token) {
+        res.send('true')
+    } else {
+        res.send('false')
+    }
 })
 
 app.listen(4001,()=>{
     console.log(`server 시작`)
 })
-// 
-// /home/ingoo/workspace/220307/cors/back/SQL/table.sql
+
+
+/*
+    
+
+    const a = fn()
+
+    const a = abc.fn()
+
+    a.fn(a,b,c,()=>{
+
+    })
+*/

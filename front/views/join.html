@@ -96,12 +96,13 @@
             
             
             console.log(response.data.errno, response.data.errno===0)
-            if(response.data.errno === 0){
+            if(response.data.errno === 0){ // 성공의 케이스 
                 // 성공
                 console.log('왜안옴?')
                 location.href='/'
-            } else {
+            } else { //
                 // 실패
+                alert('너는 에러가있단다.')
                 btn.value='회원가입'
                 btn.disabled = false
             }
