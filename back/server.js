@@ -126,6 +126,15 @@ app.post('/api/auth',(req,res)=>{
     }
 })
 
+app.post('/api/board/write',(req,res)=>{
+    const response = {
+        result:[],
+        errno:0,
+    }
+    
+	res.json(response)
+})
+
 app.listen(4001,()=>{
     console.log(`server 시작`)
 })
