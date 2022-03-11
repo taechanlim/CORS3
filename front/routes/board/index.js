@@ -3,7 +3,7 @@ const router = express.Router()
 const boardController = require('./board.controller')
 
 router.get('/list',boardController.list)
-router.get('/view',boardController.view)
+router.get('/view/:idx',boardController.view) // 
 router.get('/modify',boardController.modify)
 router.get('/write',boardController.write)
 

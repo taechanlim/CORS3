@@ -3,7 +3,7 @@ const { createSignature } = require('../utils/jwt')
 exports.auth = (req,res,next) => {
     // 1. code
     const cookies = req.headers.cookie
-   
+    
 
     // 토큰이 썩었는지 안썩었는지 확인할려면 어떤 로직을 구현해야하는지
     // 1. token 잇는 . 기준으로 내용을 뽑아온다. [header,payload,sign] OK
