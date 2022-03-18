@@ -195,7 +195,7 @@ app.post('/api/board/list', async (req,res) => {
     try {
         const [result] = await pool.execute(sql)
         const [[{total_record}]] = await pool.execute(sql2) 
-        console.log(result)
+        // console.log(result)
         response = {
             ...response,
             total_record,

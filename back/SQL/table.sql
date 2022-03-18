@@ -52,3 +52,11 @@ SELECT count(date),date FROM (
     SELECT subject,DATE_FORMAT(date,'%Y-%m-%d') as date FROM board
 ) AS a
 group by date
+
+
+FOREIGN KEY (PersonID) REFERENCES (PersonID)
+
+ALTER TABLE board
+ADD CONSTRAINT board_user_nickname
+FOREIGN KEY (nickname)
+REFERENCES user(nickname)

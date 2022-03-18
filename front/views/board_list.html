@@ -91,19 +91,36 @@
             // 게시물 자르기
             const Nodes =  response.data.result.slice((page - 1) * view_article,page * view_article);
             // splice(0,10) 
-
-            // splice(0,10)
-            let template = ''
-            Nodes.forEach(v=>{
-                template += trElement.replace('{idx}',v.idx)
-                               .replace('{subject}',v.subject)
-                               .replace('{nickname}',v.nickname)
-                               .replace('{date}',v.date)
-                               .replace('{hit}',v.hit)
-            })
-
+            const board_row = document.querySelector('#board_row')
             const tbody = document.querySelector('#board tbody')
-            tbody.innerHTML = template;
+            console.log(board_row.content)
+            Nodes.forEach(v => {
+                const clone = document.importNode(board_row.content,true)
+                const td = clone.querySelectorAll('td')
+                const aElement = document.createElement('a')
+                aElement.href = '/board/view/'+v.idx
+                aElement.innerHTML = v.subject
+                
+                td[0].innerHTML = v.idx
+                td[1].appendChild(aElement)
+                td[2].innerHTML = v.nickname
+                td[3].innerHTML = v.date
+                td[4].innerHTML = v.hit
+
+                tbody.appendChild(clone)
+            })
+            // splice(0,10) 
+            // let template = ''
+            // Nodes.forEach(v=>{
+            //     template += trElement.replace('{idx}',v.idx)
+            //                    .replace('{subject}',v.subject)
+            //                    .replace('{nickname}',v.nickname)
+            //                    .replace('{date}',v.date)
+            //                    .replace('{hit}',v.hit)
+            // })
+
+            // const tbody = document.querySelector('#board tbody')
+            // tbody.innerHTML = template;
         })
 
         function pagemove(num){
@@ -128,6 +145,9 @@
     </script>
 </head>
 <body>
+    <div id="ingoo">
+        hi
+    </div>
     <table cellspacing="0" cellpadding="0" id="board">
         <thead>
             <tr>
@@ -151,7 +171,7 @@
     <template id="board_row">
         <tr>
             <td>{idx}</td>
-            <td>{subject}</td>
+            <td></td>
             <td>{nickname}</td>
             <td>{date}</td>
             <td>{hit}</td>
@@ -169,5 +189,3 @@
     hit INT DEFAULT 0 NOT NULL,
     PRIMARY KEY(idx)
 ); -->
-
-
